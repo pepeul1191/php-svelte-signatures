@@ -9,8 +9,8 @@ const Constants = array(
     'env' => 'local',
   ),
   'prod' => array( 
-    'base_url' => '/',
-    'static_url' => '/public/',
+    'base_url' => 'https://signatures.softweb.pe/',
+    'static_url' => 'https://signatures.softweb.pe/public/',
     'env' => 'prod',
   ),
 );
