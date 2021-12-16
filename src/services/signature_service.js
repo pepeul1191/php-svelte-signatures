@@ -5,7 +5,8 @@ export const generateSignatures = (params) => {
     axios.post('signature/generate', JSON.stringify(params), {
       headers: {
         'Content-Type': 'application/json',
-      }
+      },
+      responseType:'blob'
     }).then(function (response) {
       resolve(response);
     }).catch(function (error) {

@@ -48,7 +48,12 @@ const downloadOne = (user) => {
     enterprise: enterprise,
   };
   generateSignatures(params).then((resp) => {
-    console.log(resp);
+    const url = window.URL.createObjectURL(new Blob([resp.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${resp.headers.randito}.zip`); //or any other extension
+    document.body.appendChild(link);
+    link.click();
   /*disabled = false;
     messageClass = 'text-success';
     message = 'Mensaje enviado';
@@ -73,7 +78,12 @@ const downloadAll = () => {
     enterprise: enterprise,
   };
   generateSignatures(params).then((resp) => {
-    console.log(resp);
+    const url = window.URL.createObjectURL(new Blob([resp.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${resp.headers.randito}.zip`); //or any other extension
+    document.body.appendChild(link);
+    link.click();
   /*disabled = false;
     messageClass = 'text-success';
     message = 'Mensaje enviado';

@@ -29,15 +29,40 @@ Flight::route('POST /signature/generate', function(){
   $tmp = explode('//', $enterprise['web_site']);
   $enterprise['websitename'] = (array_pop($tmp));
   $users = $payload['users'];
-  $path = Flight::get('public_tmp') . App\Helper\random(20);
+  $randito = App\Helper\random(20);
+  $path = Flight::get('public_tmp') . $randito;
   mkdir($path, 0755);
   $i = 1;
+  // htmls files
   foreach ($users as &$user) {
     $signature = App\Helper\generateSignature($enterprise, $user, Flight::get('config'));
     $myFile = $path . '/' . $i . '. ' . $user['name'] .'.html';
     file_put_contents($myFile, "\xEF\xBB\xBF".  $signature); 
     $i++;
   }
+  // zip
+  $zipper = new \Chumper\Zipper\Zipper;
+  $files = glob($path . '/*');
+  $zipPath = Flight::get('public_tmp'). $randito . '.zip';
+  $zipper->make($zipPath);
+  $zipper->add($files);
+  $zipper->close();
+  // return zip
+  $attachmentLocation = $zipPath;
+  if (file_exists($attachmentLocation)) {
+    header($_SERVER['SERVER_PROTOCOL'] . ' 200 OK');
+    header('Cache-Control: public'); // needed for internet explorer
+    header('Content-Type: application/zip');
+    header('Content-Transfer-Encoding: Binary');
+    header('Content-Length:'.filesize($attachmentLocation));
+    header('Content-Disposition: attachment; filename=file.zip');
+    header('randito: ' . $randito);
+    readfile($attachmentLocation);
+    die();        
+  } else {
+    Flight::response()->status(500);
+    die("Error: File not found.");
+  } 
 });
 
 Flight::map('notFound', function(){
