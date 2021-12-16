@@ -46,5 +46,6 @@ package-lock.json
 public/build
 public/fonts
 public/vendor
+public/tmp
 
 error_log

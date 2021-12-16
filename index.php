@@ -9,6 +9,7 @@ Flight::before('start', function(&$params, &$output){
   App\Helper\filter($_ENV['ENV']);
 });
 Flight::set('flight.views.path', 'app/views');
+Flight::set('public_tmp', 'public/tmp/');
 Flight::set('env', $_ENV);
 Flight::set('config', App\Config\Constants[$_ENV['ENV']]);
 
@@ -21,19 +22,21 @@ $home = function(){
 
 Flight::route('GET /', $home);
 
-Flight::route('POST /mail', function(){
+Flight::route('POST /signature/generate', function(){
   $request = Flight::request();
-  $payload = json_decode($request->getBody());
-  $resp1 = App\Helper\mailToUs($payload, Flight::get('config'));
-  if($resp1['status'] == 200){
-    $resp2 = App\Helper\mailToVisitor($payload, Flight::get('config'));
-    if($resp2['status'] == 200){
-      echo 'ok';
-    }else{
-      Flight::json($resp2, $code = 500);
-    }
-  }else{
-    Flight::json($resp1, $code = 500);
+  $payload = json_decode($request->getBody(), true);
+  $enterprise = $payload['enterprise'];
+  $tmp = explode('//', $enterprise['web_site']);
+  $enterprise['websitename'] = (array_pop($tmp));
+  $users = $payload['users'];
+  $path = Flight::get('public_tmp') . App\Helper\random(20);
+  mkdir($path, 0755);
+  $i = 1;
+  foreach ($users as &$user) {
+    $signature = App\Helper\generateSignature($enterprise, $user, Flight::get('config'));
+    $myFile = $path . '/' . $i . '. ' . $user['name'] .'.html';
+    file_put_contents($myFile, "\xEF\xBB\xBF".  $signature); 
+    $i++;
   }
 });
 

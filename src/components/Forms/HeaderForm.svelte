@@ -1,12 +1,13 @@
 <script>
+import { generateSignatures } from '../../services/signature_service.js';
 const static_url = STATIC_URL;
 let enterprise = {
   name: '',
   adress: '',
   phone: '',
   mail: '',
-  webSite: '',
-  logoURL: '',
+  web_site: '',
+  logo_url: '',
   slogan: '',
 };
 let separator = ':';
@@ -42,11 +43,53 @@ const loadCSV = () => {
 };
 
 const downloadOne = (user) => {
-  console.log(user);
+  var params = {
+    users: [user],
+    enterprise: enterprise,
+  };
+  generateSignatures(params).then((resp) => {
+    console.log(resp);
+  /*disabled = false;
+    messageClass = 'text-success';
+    message = 'Mensaje enviado';
+    name = '';
+    phone = '';
+    comment = '';
+    email = '';
+    inputName.focus();
+    setTimeout(() => {message = ''}, 5000);*/
+  }).catch((resp => {
+    // console.log(resp);
+    /*messageClass = 'text-danger';
+    message = 'Ocurrió un error al mandar su mensaje';
+    setTimeout(() => {message = ''}, 5000);
+    disabled = false;*/
+  }));
 };
 
 const downloadAll = () => {
-  console.log(users);
+  var params = {
+    users: users,
+    enterprise: enterprise,
+  };
+  generateSignatures(params).then((resp) => {
+    console.log(resp);
+  /*disabled = false;
+    messageClass = 'text-success';
+    message = 'Mensaje enviado';
+    name = '';
+    phone = '';
+    comment = '';
+    email = '';
+    inputName.focus();
+    setTimeout(() => {message = ''}, 5000);*/
+  }).catch((resp => {
+    // console.log(resp);
+    /*messageClass = 'text-danger';
+    message = 'Ocurrió un error al mandar su mensaje';
+    setTimeout(() => {message = ''}, 5000);
+    disabled = false;*/
+  }));
 };
 
 </script>
@@ -65,12 +108,12 @@ const downloadAll = () => {
     </div>
     <div class="col-md-3">
       <label for="webSite" class="form-label">Sitio Web</label>
-      <input type="text" class="form-control" id="webSite" aria-describedby="webSiteHelp" bind:value={enterprise.webSite}>
+      <input type="text" class="form-control" id="webSite" aria-describedby="webSiteHelp" bind:value={enterprise.web_site}>
       <div id="webSiteHelp" class="form-text"></div>
     </div>
     <div class="col-md-3">
       <label for="logoURL" class="form-label">Logo URL</label>
-      <input type="text" class="form-control" id="logoURL" aria-describedby="logoURLHelp" bind:value={enterprise.logoURL}>
+      <input type="text" class="form-control" id="logoURL" aria-describedby="logoURLHelp" bind:value={enterprise.logo_url}>
       <div id="logoURLHelp" class="form-text"></div>
     </div>
     <div class="col-md-3">
@@ -118,6 +161,7 @@ const downloadAll = () => {
       <button type="button" class="btn btn-success" on:click="{downloadAll}"><i class="fa fa-download" aria-hidden="true"></i>Decargar Firmas</button>
     </div>
   </div>
+  {#if users.length > 0}
   <div class="row">
     <div class="col-md-12">
       <br>
@@ -145,6 +189,7 @@ const downloadAll = () => {
       </table>
     </div>
   </div>
+  {/if}
 </div>
 
 <style>
